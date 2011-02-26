@@ -1,0 +1,23 @@
+Metadata-Version: 1.0
+Name: rctk.jquery
+Version: 1.0
+Summary: JQuery frontend for RCTK
+Home-page: http://rctk.org/
+Author: Ivo van der Wijk
+Author-email: ivo@rctk.org
+License: BSD
+Description: Introduction
+        ============
+        
+        
+        
+        Changelog
+        =========
+        
+        1.0dev (unreleased)
+        -------------------
+        
+        - Initial release
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
