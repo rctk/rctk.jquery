@@ -23,7 +23,7 @@ setup(name='rctk.jquery',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          # -*- Extra requirements: -*-
+          'rctk',
       ],
       entry_points="""
       # -*- Entry points: -*-
