@@ -4,6 +4,7 @@ Onion.core.JWinClient = function() {
     this.interval = 1000; // if so, how often
     this.debug = false;
     this.crashed = false;
+    this.sid = null;
 
     var root = new Onion.widget.Root(this);
     root.create();
@@ -98,7 +99,6 @@ Onion.core.JWinClient.prototype.do_work = function(data) {
         break;
     case "timer":
         Onion.util.log("Handling timer " + id + ", " + data.milliseconds);
-        var callback = Onion.util.hitch(this, "handle_tasks");
         var self=this;
         setTimeout(
           function() { 
@@ -142,7 +142,12 @@ Onion.core.JWinClient.prototype.get_work = function() {
 Onion.core.JWinClient.prototype.start_work = function () {
     $.post('start', {}, 
       (function(self) {
-        return function(data, status) {
+        return function(data, status, xhr) {
+          self.sid = xhr.getResponseHeader('rctk-sid');
+          Onion.util.log("SID", self.sid);
+          $.ajaxSetup({
+            'beforeSend':function(xhr) {xhr.setRequestHeader("rctk-sid", self.sid)}
+          });
           data = data || {};
           // a backtrace is wrapped in a list.
           if(jQuery.isArray(data) && 'crash' in data[0] && data[0].crash) {
