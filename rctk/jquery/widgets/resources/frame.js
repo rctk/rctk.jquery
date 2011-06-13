@@ -37,12 +37,12 @@ Onion.widget.Frame.prototype.setLayout = function(type, config) {
 Onion.widget.Frame.prototype.set_properties = function(data) {
     Onion.widget.Container.prototype.set_properties.apply(this, arguments);
     if(data.state) {
-        Onion.util.log("Window state update", data);
+        rctk.util.log("Window state update", data);
         if(data.state == "open") {
             this.container.dialog('open');
         }
         else if(data.state == "close") {
-            Onion.util.log("Closing");
+            rctk.util.log("Closing");
             this.container.dialog('close');
         }
     }

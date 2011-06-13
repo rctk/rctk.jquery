@@ -89,10 +89,10 @@ Onion.widget.StaticHTMLText.prototype.set_properties = function(data) {
 }
 
 Onion.widget.StaticHTMLText.prototype.handle_links = function() {
-    Onion.util.log("Installing clickhandler on statictext", $("#ctrl" + this.controlid + " a"));
+    rctk.util.log("Installing clickhandler on statictext", $("#ctrl" + this.controlid + " a"));
     var self=this;
     $("#ctrl" + this.controlid + " a").click(function() {
-        Onion.util.log("Click!", $(this).attr('href'));
+        rctk.util.log("Click!", $(this).attr('href'));
         self.jwin.add_task("event", "click", self.controlid, {link:$(this).attr('href')});
         self.jwin.flush();
         return false;

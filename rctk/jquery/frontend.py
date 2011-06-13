@@ -1,5 +1,7 @@
 import os
 
+import rctk.core
+
 from rctk.resourceregistry import getResourceRegistry
 
 from rctk.frontend import Frontend as Base

@@ -6,15 +6,13 @@
 	<title>RCTK</title>
         <!-- static dependency because of @import usage -->
         <link type="text/css" href="/static/jqueryui-1.8.4/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" />
-        <script type="text/javascript" src="/static/jquery/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="/static/jqueryui-1.8.4/jquery-ui-1.8.4.custom.min.js"></script>
 
         <!-- dynamically loaded css, js -->
         <!-- rctk-header -->
 
         <script type="text/javascript">
             $(document).ready(function() {
-                new Onion.core.JWinClient().start_work();
+                rctk.jquery.run();
             });
         </script>
 </head>

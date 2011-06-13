@@ -24,7 +24,7 @@ Onion.widget.Button.prototype.create = function(data) {
             self.jwin.register_busy(self);
          }
          else {
-            Onion.util.log("Control busy", self);
+            rctk.util.log("Control busy", self);
          }
     });
     this.set_properties(data);

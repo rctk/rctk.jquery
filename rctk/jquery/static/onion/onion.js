@@ -26,13 +26,6 @@ Onion.namespace = function() {
     return o;
 };
 
-Onion.log = function() {
-    if (Onion.util.log) {
-        return Onion.util.log.apply(Onion.util, arguments);
-    } else {
-        return false;
-    }
-};
 
 function registry() {
     var map = [];

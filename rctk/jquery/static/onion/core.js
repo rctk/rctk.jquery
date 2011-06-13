@@ -1,11 +1,31 @@
+var rctk = rctk || {};
+
+rctk.jquery = (function() {
+    return {
+        run: function() {
+            var o = new Onion.core.JWinClient();
+            rctk.core.handlers.handle = rctk.util.proxy(o.do_work, o);
+            rctk.core.handlers.request = rctk.util.proxy(this.rctk_request, this);
+            rctk.core.handlers.dump = rctk.util.proxy(o.dump, o);
+            rctk.core.run();
+        },
+        rctk_request: function(path, callback, sessionid, data) {
+            $.ajax({
+                url:path,
+                type: "POST",
+                dataType: "json",
+                data: data,
+                headers: {"rctk-sid":sessionid},
+                success: function(data, textStatus, jqXHR) {
+                    callback(jqXHR.getResponseHeader('rctk-sid'), data);
+                }
+            });
+       }
+    }
+})(jQuery);
 
 Onion.core.JWinClient = function() {
-    this.poll = false; // poll for new tasks
-    this.interval = 1000; // if so, how often
-    this.debug = false;
     this.crashed = false;
-    this.sid = null;
-
     var root = new Onion.widget.Root(this);
     root.create();
 
@@ -14,7 +34,6 @@ Onion.core.JWinClient = function() {
     this.root = $("#root");
     this.factory = $("#factory");
     this.toplevels = $("#toplevels");
-    this.queue = []
     this.busy = []
     this.request_count = 0;
 }
@@ -35,8 +54,6 @@ Onion.core.JWinClient.prototype.dump = function(data, debug) {
 }
 
 Onion.core.JWinClient.prototype.do_work = function(data) {
-    //Onion.util.log("do_work ", data);
-    
     var control_class = Onion.widget.map(data.control);
     var parent = this.controls[data.parentid];
     var id = data.id;
@@ -46,7 +63,7 @@ Onion.core.JWinClient.prototype.do_work = function(data) {
     }
 
     if('crash' in data && data.crash) {
-        this.dump(data, this.debug);
+        this.dump(data, true); // true == debug, in core now.
         return;
     }
     switch(data.action) {
@@ -98,7 +115,7 @@ Onion.core.JWinClient.prototype.do_work = function(data) {
         container.relayout(data.config);
         break;
     case "timer":
-        Onion.util.log("Handling timer " + id + ", " + data.milliseconds);
+        rctk.util.log("Handling timer " + id + ", " + data.milliseconds);
         var self=this;
         setTimeout(
           function() { 
@@ -125,7 +142,7 @@ Onion.core.JWinClient.prototype.handle_tasks = function (data, status) {
      * time to enable busy controls again
      */
     for(var i in this.busy) {
-        Onion.log("Control no longer busy", c);
+        rctk.util.log("Control no longer busy", c);
         this.busy[i].busy = false;
     }
     this.busy = [];
@@ -134,67 +151,8 @@ Onion.core.JWinClient.prototype.handle_tasks = function (data, status) {
 
 }
 
-Onion.core.JWinClient.prototype.get_work = function() {
-    $.post('pop', { 'key':'value' }, Onion.util.hitch(this, "handle_tasks"), "json");
-    this.show_throbber();
-}
-
-Onion.core.JWinClient.prototype.start_work = function () {
-    $.post('start', {}, 
-      (function(self) {
-        return function(data, status, xhr) {
-          self.sid = xhr.getResponseHeader('rctk-sid');
-          Onion.util.log("SID", self.sid);
-          $.ajaxSetup({
-            'beforeSend':function(xhr) {xhr.setRequestHeader("rctk-sid", self.sid)}
-          });
-          data = data || {};
-          // a backtrace is wrapped in a list.
-          if(jQuery.isArray(data) && 'crash' in data[0] && data[0].crash) {
-              // pass true for debug, since we've never actually received
-              // a configuration
-              self.dump(data[0], true);
-              return;
-          }
-          if('config' in data) {
-              var config = data.config;
-
-              if('polling' in config) {
-                  if(config.polling) {
-                      self.poll = true;
-                      self.interval = config.polling;
-                      self.polltimer = setInterval(
-                         Onion.util.proxy("get_work", self),
-                         self.interval);
-                  }
-                  else {
-                      self.poll = false;
-                  }
-              }
-              if('debug' in config) {
-                  self.debug = config.debug;
-              }
-              if('title' in config) {
-                    // fails on IE8, argh!
-                    //$("title").html(config.title);
-                    document.title = config.title || '';
-              }
-          }
-          self.get_work();
-        };
-      })(this), "json");
-}
-
-Onion.core.JWinClient.prototype.flush = function() {
-    if(this.queue.length > 0) {
-        $.post("task", {'queue':JSON.stringify(this.queue)}, Onion.util.hitch(this, "handle_tasks"), "json");
-        this.show_throbber();
-        this.queue = []
-    }
-}
-
 Onion.core.JWinClient.prototype.add_task = function(method, type, id, data) {
-    this.queue.push({'method':method, 'type':type, 'id':id, 'data':data});
+    rctk.core.push({'method':method, 'type':type, 'id':id, 'data':data});
 }
 
 Onion.core.JWinClient.prototype.register_busy = function(control) {
@@ -208,23 +166,10 @@ Onion.core.JWinClient.prototype.register_busy = function(control) {
     this.busy.push(control);
 }
 
-Onion.core.JWinClient.prototype.show_throbber = function() {
-    this.request_count++;
-
-    /*
-     * This doesn't always work perfectly. A request may have finished
-     * and a new one may have been sent during the 1000msec delay and
-     * we wronly conclude we need to show a progress cursor.
-     */
-    setTimeout(
-        (function(self) {
-            return function() {
-                if(self.request_count == 0) {
-                    return;
-                }
-
-                $("body").css("cursor", "progress");
-            }
-        })(this) , 1000);
+Onion.core.JWinClient.prototype.flush = function() {
+    // widgets call this to flush through self.jwin
+    // completely replacing self.jwin with rctk.core not an option yet
+    // due to busy registration
+    rctk.util.log("Deprecated JWinClient.flush called");
+    rctk.core.flush();
 }
-
