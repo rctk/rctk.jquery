@@ -1,20 +1,22 @@
 var rctk = rctk || {};
 
-rctk.jquery = (function() {
+rctk.jquery = (function($) {
+  // return a functions so we can create instances using new
+  return function() {
     var o = null;
     var core = null;
 
     return {
         run: function() {
-            o = new Onion.core.JWinClient();
-            //core = new rctk.core();
-            rctk.core.handlers.handle = rctk.util.proxy(o.do_work, o);
-            rctk.core.handlers.request = rctk.util.proxy(this.rctk_request, this);
-            rctk.core.handlers.dump = rctk.util.proxy(o.dump, o);
-            rctk.core.handlers.construct = rctk.util.proxy(this.construct, this);
+            core = new rctk.core();
+            o = new Onion.core.JWinClient(core);
+            core.handlers.handle = rctk.util.proxy(o.do_work, o);
+            core.handlers.request = rctk.util.proxy(this.rctk_request, this);
+            core.handlers.dump = rctk.util.proxy(o.dump, o);
+            core.handlers.construct = rctk.util.proxy(this.construct, this);
             var root = new Onion.widget.Root(this);
             root.create();
-            rctk.core.run(root);
+            core.run(root);
         },
         rctk_request: function(path, callback, sessionid, data) {
             $.ajax({
@@ -34,10 +36,11 @@ rctk.jquery = (function() {
             return c;
         }
     }
+  }
 })(jQuery);
 
-Onion.core.JWinClient = function() {
-    this.crashed = false;
+Onion.core.JWinClient = function(core) {
+    this.core = core;
 
     // references to the actual div's
     this.root = $("#root");
@@ -55,19 +58,23 @@ Onion.core.JWinClient.prototype.dump = function(data, debug) {
     }
     $("#system").jqm({'modal':true});
     $("#system").jqmShow();
-    this.crashed = true;
     return;
 
 }
 
 Onion.core.JWinClient.prototype.register_busy = function(c) {
     rctk.util.log("Deprecated jwin register_busy called");
-    rctk.core.register_busy(c);
+    this.core.register_busy(c);
+}
+
+Onion.core.JWinClient.prototype.get_control = function(id) {
+    rctk.util.log("Deprecated jwin get_control called");
+    return this.core.get_control(id);
 }
 
 Onion.core.JWinClient.prototype.add_task = function(method, type, id, data) {
     rctk.util.log("Deprecated jwin add_task called");
-    rctk.core.push({'method':method, 'type':type, 'id':id, 'data':data});
+    this.core.push({'method':method, 'type':type, 'id':id, 'data':data});
 }
 
 Onion.core.JWinClient.prototype.flush = function() {
@@ -75,5 +82,5 @@ Onion.core.JWinClient.prototype.flush = function() {
     // completely replacing self.jwin with rctk.core not an option yet
     // due to busy registration
     rctk.util.log("Deprecated JWinClient.flush called");
-    rctk.core.flush();
+    this.core.flush();
 }
