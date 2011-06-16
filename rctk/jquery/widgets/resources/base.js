@@ -9,7 +9,11 @@ Onion.widget.Control = function(jwin, parent, controlid) {
 
     this.maxwidth = 0;
     this.maxheight = 0;
-}
+};
+
+Onion.widget.Control.prototype.handle = function(type) {
+    this["handle_"+type] = true;
+};
 
 Onion.widget.Control.prototype.set_properties = function(data) {
     if (data === undefined) {
@@ -88,7 +92,7 @@ Onion.widget.Control.prototype.set_properties = function(data) {
             this.control.css('padding-' + side, data.padding[side] + 'px');
         }
     }
-}
+};
 
 Onion.widget.Control.prototype.create = function(data) {
     var controlid = "ctrl"+this.controlid;
@@ -98,11 +102,11 @@ Onion.widget.Control.prototype.create = function(data) {
     this.control.addClass(this.name);
     this.set_properties(data);
 
-}
+};
 
 Onion.widget.Control.prototype.destroy = function() {
     this.control.remove();
-}
+};
 
 Onion.widget.Control.prototype.max_size = function() {
     /*
@@ -111,7 +115,7 @@ Onion.widget.Control.prototype.max_size = function() {
      * 0 means no restriction
      */
     return {width:this.maxwidth, height:this.maxheight}
-}
+};
 /*
  * A container is a control that can contain controls, i.e. a window,
  * a layout manager. Its control may be different from its container
@@ -121,22 +125,22 @@ Onion.widget.Container = function(jwin, parent, controlid) {
     Onion.widget.Control.apply(this, arguments);
     // default layout manager
     this.layout = new Onion.layout.NewLayout(this.jwin, this);
-}
+};
 
 Onion.widget.Container.prototype = new Onion.widget.Control();
 
 Onion.widget.Container.prototype.create = function(data) {
     Onion.widget.Control.prototype.create.apply(this, arguments);
     this.container = this.control;
-}
+};
 
 Onion.widget.Container.prototype.append = function(control, data) {
     this.layout.append(control, data);
-}
+};
 
 Onion.widget.Container.prototype.remove = function(control, data) {
     this.layout.remove(control, data);
-}
+};
 
 Onion.widget.Container.prototype.setLayout = function(type, config) {
     // unimplemented options:
@@ -146,17 +150,17 @@ Onion.widget.Container.prototype.setLayout = function(type, config) {
         this.layout = new layout_class(this.jwin, this, config);
         this.layout.create();
     }
-}
+};
 
 Onion.widget.Container.prototype.relayout = function(config) {
     this.layout.layout(config);
     this.layout_updated();
-}
+};
 
-Onion.widget.Container.prototype.layout_updated = function() {}
+Onion.widget.Container.prototype.layout_updated = function() {};
 
 Onion.widget.Container.prototype.resize = function(width, height) {
     this.container.css("width", width + "px");
     this.container.css("height", height + "px");
-}
+};
 
