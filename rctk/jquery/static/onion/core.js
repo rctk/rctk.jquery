@@ -32,8 +32,8 @@ rctk.jquery = (function($) {
                 }
             });
         },
-        construct: function(class, parent, id) {
-            var control_class = Onion.widget.map(class);
+        construct: function(klass, parent, id) {
+            var control_class = Onion.widget.map(klass);
             c = new control_class(this, parent, id);
             return c;
         },
