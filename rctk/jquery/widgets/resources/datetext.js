@@ -10,7 +10,8 @@ Onion.widget.DateText.prototype = new Onion.widget.Text();
 
 Onion.widget.DateText.prototype.create = function(data) {
     Onion.widget.Text.prototype.create.apply(this, arguments);
-    this.control.datepicker(data.pickerconfig);
+    // yy actually means 4-digit.
+    this.control.datepicker({dateFormat: "yy-mm-dd"});
 }
 
 // register
