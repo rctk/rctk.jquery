@@ -14,7 +14,6 @@ rctk.jquery = (function($) {
         run: function() {
             core = new rctk.core();
             core.handlers.request = rctk.util.proxy(this.rctk_request, this);
-            core.handlers.dump = rctk.util.proxy(this.dump, this);
             core.handlers.construct = rctk.util.proxy(this.construct, this);
             var root = new Onion.widget.Root(this);
             root.create();
@@ -36,19 +35,6 @@ rctk.jquery = (function($) {
             var control_class = Onion.widget.map(klass);
             c = new control_class(this, parent, id);
             return c;
-        },
-        dump: function(data, debug) {
-            if(debug) {
-                this.root.append('<div id="system" class="jqmWindow" style="width: 600px; height: 600px"><b>The application ' + data.application + ' has crashed. </b><br><p>Click <a href="/">here</a> to restart</p><br><div style="overflow: auto; width: 600px; height: 500px;">' + data.traceback + '</div></div>');
-            }
-            else {
-                this.root.append('<div id="system" class="jqmWindow" style="width: 600px; height: 300px"><b>The application ' + data.application + ' has crashed. </b><br><p>Click <a href="/">here</a> to restart</p></div>');
-
-            }
-            $("#system").jqm({'modal':true});
-            $("#system").jqmShow();
-            return;
-
         },
 
         register_busy: function(c) {
