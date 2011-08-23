@@ -45,6 +45,6 @@ Onion.widget.CheckBox.prototype.set_properties = function(data) {
     if('text' in data) {
         $("#label-ctrl" + this.controlid).text(data.text);
     }
-}
+};
 
 Onion.widget.register("checkbox", Onion.widget.CheckBox);
