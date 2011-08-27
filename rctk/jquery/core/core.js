@@ -58,6 +58,11 @@ rctk.jquery = (function($) {
             // due to busy registration
             rctk.util.log("Deprecated JWinClient.flush called");
             core.flush();
+        },
+        get_core: function() {
+            // allow controls to access core this way, bypassing the obsole
+            // jwin interface eventually
+            return core;
         }
     }
   }
