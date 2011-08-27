@@ -2,6 +2,8 @@ Onion.widget.Control = function(jwin, parent, controlid) {
     this.cssclass = "control";
     this.name = "base";
     this.jwin = jwin;
+    // jwin may be unitialized due to crappy OO construct
+    this.core = jwin?jwin.get_core():null; // slowly get rid of jwin dep.
     this.controlid = controlid;
     this.parent = parent;
     this.debug = false;
