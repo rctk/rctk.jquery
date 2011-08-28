@@ -10,9 +10,6 @@ Onion.widget.Frame.prototype.create = function(data) {
 
     // possibly request position, (open) state from the WindowManager
     var config = {'autoOpen':false, 'modal':false, 'resize':false, 'position':'top'};
-    if('position' in data && data.position) {
-        config.position = data.position; // see http://jqueryui.com/demos/dialog/#option-position
-    }
 
     this.jwin.factory.append('<div id="' + controlid + '" title="' + data.title + '"></div>');
     this.control = $("#"+controlid);
@@ -64,6 +61,9 @@ Onion.widget.Frame.prototype.set_properties = function(data) {
     }
     if('resizable' in data) {
         this.container.dialog("option", 'resize', data.resizable);
+    }
+    if('position' in data && data.position) {
+        this.container.dialog("option", "position", data.position);
     }
 };
 
