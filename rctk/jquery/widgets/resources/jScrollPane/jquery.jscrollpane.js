@@ -126,7 +126,9 @@
 					lastChild.css('margin-bottom', 0);
 					*/
 				} else {
-					elem.css('width', '');
+                    // For some reason, clearing width this way loses the actual size of the inner pane
+                    // and the scrollpane gets the same width as innerpane. -- Ivo 2011/09/06
+					//elem.css('width', '');
 
 					maintainAtBottom = settings.stickToBottom && isCloseToBottom();
 					maintainAtRight  = settings.stickToRight  && isCloseToRight();

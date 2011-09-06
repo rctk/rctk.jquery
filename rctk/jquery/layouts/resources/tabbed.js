@@ -21,7 +21,7 @@ Onion.layout.Tabbed.prototype.create = function() {
     this.tabs = $("#tabs" + this.parent.controlid);
     this.layoutcontrol.tabs();
     this.created = true;
-}
+};
 
 /*
  * Perhaps too primitive for tabs - you want to get hold of the tab
@@ -29,7 +29,7 @@ Onion.layout.Tabbed.prototype.create = function() {
 Onion.layout.Tabbed.prototype.append = function(control, data) {
     this.create();
 
-    var title = data.title
+    var title = data.title;
     this.layoutcontrol.append("<div id='layoutctr" + control.controlid + "'></div>");
     var ctr = $("#layoutctr" + control.controlid);
     ctr.addClass("tab");
@@ -37,10 +37,20 @@ Onion.layout.Tabbed.prototype.append = function(control, data) {
     control.containingparent = this.parent;
     this.layoutcontrol.tabs('add', '#layoutctr' + control.controlid, title);
     this.controls.push(control);
-
-}
+};
 
 Onion.layout.Tabbed.prototype.layout = function() {
-}
+    rctk.util.log("Parent w, h " + this.parent.control.width() + ", " + this.parent.control.height());
+    this.layoutcontrol.width(this.parent.control.width());
+    this.layoutcontrol.height(this.parent.control.height());
+    var tabheight = this.layoutcontrol.find("ul").height();
+    for(var i = 0; i < this.controls.length; i++) {
+        console.log("Setting width");
+        console.log(this.controls[i]);
+        this.controls[i].control.css("width", this.parent.control.width());
+        this.controls[i].control.css("height", this.parent.control.height() - tabheight);
+        this.controls[i].layout_updated();
+    }
+};
 
 Onion.layout.register('tabbed', Onion.layout.Tabbed);

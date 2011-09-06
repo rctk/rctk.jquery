@@ -161,7 +161,8 @@ Onion.layout.NewLayout.prototype.layout = function(config) {
     for(var i=0; i<this.children.length; i++) {
         var info = this.children[i];
         var ctr = info.control;
-
+        var width = 1;
+        var height = 1;
         /*
          * Find the size of the control, but spread it over the rows/
          * columns it has allocated.
@@ -177,16 +178,10 @@ Onion.layout.NewLayout.prototype.layout = function(config) {
          * not sufficient, the next loop will fix that (in an ugly way).
          */
         if(info.colspan <= 1) {
-            var width = info.width + info.padx*2;
-        }
-        else {
-            var width = 1; // 1 px
+            width = info.width + info.padx*2;
         }
         if(info.rowspan <= 1) {
-            var height = info.height + info.pady*2;
-        }
-        else {
-            var height = 1;
+            height = info.height + info.pady*2;
         }
 
         /* 
@@ -259,7 +254,7 @@ Onion.layout.NewLayout.prototype.layout = function(config) {
     this.totalwidth = this.sumwidth();
     this.totalheight = this.sumheight();
 
-    var parentmax = this.parent.max_size()
+    var parentmax = this.parent.max_size();
     var maxwidth = Math.min(this.totalwidth, parentmax.width) || this.totalwidth;
     var maxheight = Math.min(this.totalheight, parentmax.height) || this.totalheight;
 
@@ -275,8 +270,6 @@ Onion.layout.NewLayout.prototype.layout = function(config) {
         var y = this.sumheight(0, info.row);
         var w = this.sumwidth(info.column, info.column+info.colspan);
         var h = this.sumheight(info.row, info.row+info.rowspan);
-
-
 
         /*
          * The default behaviour is to center the control
@@ -302,11 +295,11 @@ Onion.layout.NewLayout.prototype.layout = function(config) {
                 ctr.control.css("width", w - info.padx*2);
                 expanded = true;
             }
-            //if(expanded && (ctr instanceof Onion.widget.Container)) {
-            //    rctk.util.log("Expanding!!!!!", ctr);
-            //    ctr.relayout();
-            //    rctk.util.log("-------- DONE -------");
-            //}
+            if(expanded && (ctr instanceof Onion.widget.Container)) {
+                //rctk.util.log("Expanding!!!!!", ctr);
+                ctr.relayout();
+                //rctk.util.log("-------- DONE -------");
+            }
             // handle positioning
             if(N) {
                 ctr.control.css("top", (y+info.pady) + "px");

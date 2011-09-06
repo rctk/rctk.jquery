@@ -23,9 +23,9 @@ addResource(JSFileResource('resources/image.js'))
 addResource(JSFileResource('resources/collection.js'))
 
 ## jScrollPane support
-addResource(JSFileResource("resources/jScrollPane/jScrollPane.js"))
+addResource(JSFileResource("resources/jScrollPane/jquery.jscrollpane.js"))
 addResource(JSFileResource("resources/jScrollPane/jquery.mousewheel.js"))
-addResource(CSSFileResource("resources/jScrollPane/jScrollPane.css"))
+addResource(CSSFileResource("resources/jScrollPane/jquery.jscrollpane.css"))
 
 ## styling/theming
 addResource(CSSFileResource('resources/style.css'))

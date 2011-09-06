@@ -25,9 +25,9 @@ Onion.widget.Panel.prototype.create = function(data) {
     if(data.scrolling) {
         this.scrolling = true;
 
-        this.control.jScrollPane({maintainPosition:true});
-        this.api = this.control.data('jsp');
-        this.container = this.api.getContentPane();
+        //this.control.jScrollPane({maintainPosition:true});
+        //this.api = this.control.data('jsp');
+        //this.container = this.api.getContentPane();
     }
     else {
         this.scrolling = false;
@@ -36,6 +36,11 @@ Onion.widget.Panel.prototype.create = function(data) {
 
 Onion.widget.Panel.prototype.update_scrolling = function() {
     if(this.scrolling) {
+        if(this.api === undefined) {
+            this.control.jScrollPane({maintainPosition:true});
+            this.api = this.control.data('jsp');
+            this.container = this.api.getContentPane();
+        }
         this.api.reinitialise();
     }
 };
@@ -56,7 +61,7 @@ Onion.widget.Panel.prototype.max_size = function() {
      * no scrollbar may appear
      */
     if(this.scrolling) {
-        return {width:this.maxwidth, height:0};
+        return {width:0, height:0};
     }
     else {
         return {width:this.maxwidth, height:this.maxheight};
@@ -83,4 +88,5 @@ Onion.widget.Panel.prototype.set_properties = function(data) {
     // ignore scrolling, it can only be set at create
 };
 
+// destroy -> api.destroy()
 Onion.widget.register("panel", Onion.widget.Panel);

@@ -11,40 +11,42 @@ Onion.widget.Root = function(jwin) {
     this.container = this.control;
     Onion.widget.Container.apply(this, [jwin, this, 0]);
     this.name = "root";
-}
+};
 
-Onion.widget.Root.prototype = new Onion.widget.Container()
+Onion.widget.Root.prototype = new Onion.widget.Container();
 
 Onion.widget.Root.prototype.create = function(data) {
     this.set_properties(data);
     this.control.addClass(this.cssclass);
     this.control.addClass(this.name);
-}
+    this.set_properties(data);
+};
 
 Onion.widget.Root.prototype.append = function(control, data) {
     //control.control.appendTo(this.container);
     this.layout.append(control, data);
-}
+};
 
 Onion.widget.Root.prototype.set_properties = function(data) {
     Onion.widget.Container.prototype.set_properties.apply(this, arguments);
-    if(data === undefined) {
-        return;
-    }
-    if('title' in data) {
+    if(data && 'title' in data) {
         $("title").html(data.title);
     }
     // properly resizing the actual window is tricky (and usually blocked
     // anyway)
-    if('width' in data && data.width) {
+    if(data && 'width' in data && data.width) {
         $("#root").width(data.width);
-        //window.resizeTo(data.width, $(window).height());
     }
-    if('height' in data && data.height) {
+    else {
+        this.control.width($(window).width());
+    }
+    if(data && 'height' in data && data.height) {
         $("#root").height(data.width);
-        //window.resizeTo($(window).width(), data.height);
     }
-}
+    else {
+        this.control.height($(window).height());
+    }
+};
 
 /*
  * rctk supports "calling" methods on controls. Root probably makes
@@ -53,6 +55,6 @@ Onion.widget.Root.prototype.set_properties = function(data) {
  */
 Onion.widget.Root.prototype.open_url = function(url) {
     window.open(url);
-}
+};
 Onion.widget.register("root", Onion.widget.Root);
 
